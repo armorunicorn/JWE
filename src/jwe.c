@@ -484,7 +484,9 @@ void *TrainModelThread(void *id) {
       if (c >= sentence_length) continue;
       last_word = sen[c];
       if (last_word == -1) continue;
+        //词向量添加
       for (c = 0; c < layer1_size; c++) neu1[c] += syn0[c + last_word * layer1_size];
+      //添加的代码
       for (c = 0; c < vocab[last_word].character_size; c++) {
         char_id = vocab[last_word].character[c];
         char_id_list[char_list_cnt++] = char_id;
@@ -544,18 +546,21 @@ void *TrainModelThread(void *id) {
             f2 += neuchar[c] * syn1neg[c + l2];
             f3 += neucomp[c] * syn1neg[c + l2];
           }
+          //f1
           if (f1 > MAX_EXP)
             g1 = (label - 1) * alpha;
           else if (f1 < -MAX_EXP)
             g1 = (label - 0) * alpha;
           else
             g1 = (label - expTable[(int)((f1 + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]) * alpha;
+          //f2
           if (f2 > MAX_EXP)
             g2 = (label - 1) * alpha;
           else if (f2 < -MAX_EXP)
             g2 = (label - 0) * alpha;
           else
             g2 = (label - expTable[(int)((f2 + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]) * alpha;
+          //f3
           if (f3 > MAX_EXP)
             g3 = (label - 1) * alpha;
           else if (f3 < -MAX_EXP)
@@ -604,7 +609,7 @@ void *TrainModelThread(void *id) {
             else
               syn0[c + last_word * layer1_size] += neu1_grad[c];
           }
-        }
+      }
       for (a = 0; a < char_list_cnt; a++) {
         char_id = char_id_list[a];
         for (c = 0; c < layer1_size; c++){
